@@ -1,6 +1,6 @@
 # md2anki
 
-Convert markdown documents to anki flashcards with this simple python script. 
+Convert markdown documents to [anki](https://apps.ankiweb.net/) flashcards with this simple python script. 
 
 Powered by [python-markdown2](https://github.com/trentm/python-markdown2) and [genanki](https://github.com/kerrickstaley/genanki).
 
@@ -10,6 +10,7 @@ Powered by [python-markdown2](https://github.com/trentm/python-markdown2) and [g
 - Markdown image size specifiers
 - Tables
 - All the basic markdown syntax
+- Style flashcards with CSS
 
 ## Usage
 
@@ -79,3 +80,5 @@ Another answer... _With an image!_
 Into this:
 
 ![](misc/0.png)
+
+More examples in the `examples/` of this repository.
