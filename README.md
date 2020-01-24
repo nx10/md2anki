@@ -81,4 +81,15 @@ Into this:
 
 ![](misc/0.png)
 
-More examples in the `examples/` of this repository.
+More examples in the `example/` directory of this repository.
+
+## CSS styling.
+
+CSS can be added using the `-s PATH/TO/STYLE.css` parameter.
+CSS with the filename `style.css` in the same folder as the markdown file will be applied automatically.
+
+Most markdown CSS should work as expected. For example this [github markdown](https://github.com/sindresorhus/github-markdown-css).
+
+## Notes
+
+I created this for personal use, the code is quite messy but works well. Only tested under windows. Feel free to send me PRs or questions.
