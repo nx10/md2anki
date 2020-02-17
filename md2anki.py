@@ -17,6 +17,7 @@ def main():
   parser.add_argument('INPUT', type=str, help='Input *.md path.')
   parser.add_argument('-o', '--output', type=str, help='Output *.apkg path.')
   parser.add_argument('-s', '--style', type=str, help='CSS card style path.')
+  parser.add_argument('-q', '--questions', action='store_true', help='Create *_questions.md with stripped answers.')
 
   args = parser.parse_args()
 
@@ -27,7 +28,17 @@ def main():
     return
 
   fbase = os.path.splitext(os.path.basename(src_file))[0]
-  fbase_dir = os.path.dirname(src_file) + '/'
+  fbase_dir = os.path.dirname(src_file)
+  if len(fbase_dir) > 0:
+    fbase_dir += '/'
+
+  if args.questions is not None:
+    dst_file = fbase + '_questions.md'
+    if args.output is not None:
+      dst_file = args.output
+    strip_answers(src_file, dst_file)
+    return
+
   
   dst_file = fbase + '.apkg'
 
@@ -93,7 +104,6 @@ class CardData:
       return self.get_domain_plain(0) + '::' + self.get_domain_plain(1)
     else:
       return self.get_domain_plain(0)
-
 
 class Md2Anki:
   all_decks = []
@@ -221,6 +231,15 @@ def h_level(txt, m=3):
     if txt.startswith(i*'#'):
       return i
   return 0
+
+def strip_answers(src_file, dst_file):
+  out_file = open(dst_file, 'w', encoding='utf-8')
+  with open(src_file, 'r', encoding='utf-8') as myfile:
+    for line in myfile:
+      h = h_level(line)
+      if h > 0:  # new card start
+        out_file.write(line + '\n')
+  out_file.close()
 
 if __name__ == '__main__':
     main()

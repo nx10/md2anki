@@ -34,6 +34,7 @@ optional arguments:
                         Output *.apkg path.
   -s STYLE, --style STYLE
                         CSS card style path.
+  -q, --questions       Create *_questions.md with stripped answers.
 ```
 
 ## Dependencies
