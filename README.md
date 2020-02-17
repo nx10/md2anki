@@ -35,6 +35,7 @@ optional arguments:
   -s STYLE, --style STYLE
                         CSS card style path.
   -q, --questions       Create *_questions.md with stripped answers.
+  -w, --web             Create *.html document.
 ```
 
 ## Dependencies

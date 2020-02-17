@@ -18,6 +18,7 @@ def main():
   parser.add_argument('-o', '--output', type=str, help='Output *.apkg path.')
   parser.add_argument('-s', '--style', type=str, help='CSS card style path.')
   parser.add_argument('-q', '--questions', action='store_true', help='Create *_questions.md with stripped answers.')
+  parser.add_argument('-w', '--web', action='store_true', help='Create *.html document.')
 
   args = parser.parse_args()
 
@@ -49,6 +50,14 @@ def main():
     dst_file = args.output
   if args.style is not None:
     style_path = args.style
+
+  if args.web:
+    dst_file = fbase + '.html'
+    if args.output is not None:
+      dst_file = args.output
+    compile_html(src_file, dst_file, fbase, fbase_dir, style_path)
+    return
+
   if os.path.exists(style_path):
     style = open(style_path, "r").read()
 
@@ -239,6 +248,44 @@ def strip_answers(src_file, dst_file):
       h = h_level(line)
       if h > 0:  # new card start
         out_file.write(line + '\n')
+  out_file.close()
+
+def compile_html(src_file, dst_file, fbase, fbase_dir, style_path):
+  mymd = ''
+  with open(src_file, 'r', encoding='utf-8') as myfile:
+    mymd = myfile.read()
+
+  buff = 0
+  buff_ctxt = ''
+  for img in re.finditer(r'(?:!\[(.*?)\]\((\S*)( =(\d*)x(\d*))?\))', mymd):
+    m_alt = img.group(1)
+    m_path = fbase_dir+img.group(2)
+    m_width = img.group(4)
+    m_height = img.group(5)
+
+    blob = '<img src="' + m_path + '"'
+    if (not m_alt == None):
+      blob += ' alt="'+m_alt+'"'
+    if (not m_width == None and len(m_width.strip()) > 0):
+      blob += ' width="'+m_width.strip()+'"'
+    if (not m_height == None and len(m_height.strip()) > 0):
+      blob += ' height="'+m_height.strip()+'"'
+    blob += '>'
+
+    buff_ctxt += mymd[buff:img.start()] + blob
+    buff = img.end()
+    
+  buff_ctxt += mymd[buff:len(mymd)]
+  mymd = buff_ctxt
+
+
+  markdowner = Markdown(extras=["tables"])
+  mymd = markdowner.convert(mymd)
+
+  myhtml = '<!DOCTYPE html><html><head><link rel="stylesheet" href="'+style_path+'"><title>'+fbase+'</title></head><body><article class="markdown-body">'+mymd+'</article></body></html>'
+
+  out_file = open(dst_file, 'w', encoding='utf-8')
+  out_file.write(myhtml)
   out_file.close()
 
 if __name__ == '__main__':
