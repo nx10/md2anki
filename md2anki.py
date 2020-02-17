@@ -32,7 +32,7 @@ def main():
   if len(fbase_dir) > 0:
     fbase_dir += '/'
 
-  if args.questions is not None:
+  if args.questions:
     dst_file = fbase + '_questions.md'
     if args.output is not None:
       dst_file = args.output
