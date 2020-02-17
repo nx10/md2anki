@@ -21,6 +21,11 @@ def main():
   args = parser.parse_args()
 
   src_file = args.INPUT
+
+  if not os.path.exists(src_file):
+    print('File not found:  \'', src_file+'\'')
+    return
+
   fbase = os.path.splitext(os.path.basename(src_file))[0]
   fbase_dir = os.path.dirname(src_file) + '/'
   
@@ -70,9 +75,13 @@ class CardData:
   title = ''
   level = -1
   domain = ['', '', '']
+  lvl_id = 0
 
   def get_title_plain(self):
     return self.title[4:].strip()
+    
+  def get_title_md(self):
+    return self.title + '\n*' + self.get_domain_plain(1) + ' - #' + str(self.lvl_id) + '*'
   
   def get_domain_plain(self, d):
     return self.domain[d][(d+2):].strip()
@@ -119,7 +128,7 @@ class Md2Anki:
 
     ccounter = 0
     card = CardData()
-    card.domain[0] = self.fbase
+    card.domain[0] = '# ' + self.fbase
     with open(src_file, 'r', encoding='utf-8') as myfile:
       for line in myfile:
         h = h_level(line)
@@ -136,6 +145,7 @@ class Md2Anki:
 
           if card.level == 2:
             #print('New deck: '+deck_name)
+            card.lvl_id = 0
             if not self.deck == None:
               self.all_decks.append(self.deck)
             self.deck = genanki.Deck(
@@ -143,6 +153,7 @@ class Md2Anki:
               card.get_deck_name())
 
           if card.level == 3:
+            card.lvl_id += 1
             ccounter += 1
 
         else:  # just text -> add to card
@@ -197,7 +208,7 @@ class Md2Anki:
     self.deck.add_note(genanki.Note(
       model=self.model,
       fields=[
-        self.markdowner.convert(card.title).strip(),
+        self.markdowner.convert(card.get_title_md()).strip(),
         self.markdowner.convert(card.txt).strip()]))
 
     # tags=[re.sub(r'#*','',cdomain[0]).strip().replace(' ','_'),re.sub(r'#*','',cdomain[1]).strip().replace(' ','_')])
