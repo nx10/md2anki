@@ -282,7 +282,7 @@ def compile_html(src_file, dst_file, fbase, fbase_dir, style_path):
   markdowner = Markdown(extras=["tables"])
   mymd = markdowner.convert(mymd)
 
-  myhtml = '<!DOCTYPE html><html><head><link rel="stylesheet" href="'+style_path+'"><title>'+fbase+'</title></head><body><article class="markdown-body">'+mymd+'</article></body></html>'
+  myhtml = '<!DOCTYPE html><html><head><meta charset="utf-8"/><link rel="stylesheet" href="'+style_path+'"><title>'+fbase+'</title></head><body><article class="markdown-body">'+mymd+'</article></body></html>'
 
   out_file = open(dst_file, 'w', encoding='utf-8')
   out_file.write(myhtml)
