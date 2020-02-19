@@ -17,7 +17,7 @@ def main():
   parser.add_argument('INPUT', type=str, help='Input *.md path.')
   parser.add_argument('-o', '--output', type=str, help='Output *.apkg path.')
   parser.add_argument('-s', '--style', type=str, help='CSS card style path.')
-  parser.add_argument('-q', '--questions', action='store_true', help='Create *_questions.md with stripped answers.')
+  parser.add_argument('-q', '--questions', type=int, nargs='?', default=-1, const=3, help='Create *_questions.md with stripped answers. Optionally can be set to extract only set names. (2 = sub-decks; 1 = decks)')
   parser.add_argument('-w', '--web', action='store_true', help='Create *.html document.')
 
   args = parser.parse_args()
@@ -33,11 +33,11 @@ def main():
   if len(fbase_dir) > 0:
     fbase_dir += '/'
 
-  if args.questions:
+  if args.questions >= 0:
     dst_file = fbase + '_questions.md'
     if args.output is not None:
       dst_file = args.output
-    strip_answers(src_file, dst_file)
+    strip_answers(src_file, dst_file, args.questions)
     return
 
   
@@ -241,12 +241,12 @@ def h_level(txt, m=3):
       return i
   return 0
 
-def strip_answers(src_file, dst_file):
+def strip_answers(src_file, dst_file, lvl):
   out_file = open(dst_file, 'w', encoding='utf-8')
   with open(src_file, 'r', encoding='utf-8') as myfile:
     for line in myfile:
       h = h_level(line)
-      if h > 0:  # new card start
+      if h > 0 and h <= lvl:  # new card start
         out_file.write(line + '\n')
   out_file.close()
 
